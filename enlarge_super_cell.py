@@ -2,6 +2,19 @@ from itertools import chain
 
 
 def enlarge_super_cell(atoms, period):
+    '''Takes a list of atoms and the period in a unit cell then generates
+       a larger super cell
+
+    Parameters:
+        atoms (list): Coordinates of the atoms and types
+        period (list): 3D period of the unit cell
+
+
+    Returns:
+        super_cell (list): Coordinates of atoms and types in the super cell
+        period (list): Period of the super cell
+
+    '''
     super_cell = []
     for atom in atoms:
         type = atom.pop()
