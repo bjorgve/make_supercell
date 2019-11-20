@@ -18,10 +18,13 @@ def enlarge_super_cell(atoms, period):
     super_cell = []
     for atom in atoms:
         type = atom.pop()
-        # get possible coordinates on each axis
-        x = [atom[0] + x*period[0] for x in range(-1, 2)]
-        y = [atom[1] + x*period[1] for x in range(-1, 2)]
-        z = [atom[2] + x*period[2] for x in range(-1, 2)]
+        # Get possible coordinates on each axis
+        # The coordinates are shifted such that given a
+        # unit cell given in the first quadrant
+        # all coordinates remain positive
+        x = [atom[0] + x*period[0] for x in range(3)]
+        y = [atom[1] + x*period[1] for x in range(3)]
+        z = [atom[2] + x*period[2] for x in range(3)]
         new_atoms = []
         for i in range(3):
             for j in range(3):
@@ -30,6 +33,7 @@ def enlarge_super_cell(atoms, period):
         new_atoms = [new_atom + [type] for new_atom in new_atoms]
         super_cell.append(new_atoms)
     return list(chain(*super_cell)), [period*3.0 for period in period]
+
 
 
 if __name__ == "__main__":
