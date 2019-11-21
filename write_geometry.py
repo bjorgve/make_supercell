@@ -6,10 +6,10 @@ def write_geometry(atoms, period, file):
     '''Takes a list of atoms and the period in a simple cubic cell
        and generates a geometry.in file in the AIMS style.
 
-      Parameters:
-          atoms (list): Coordinates of the atoms and types.
-          period (list): 3D period of the unitcell.
-          file (str): Output file name
+    Parameters:
+        atoms (list): Coordinates of the atoms and types.
+        period (list): 3D period of the unitcell.
+        file (str): Output file name.
     '''
     for atom in atoms:
         atom.insert(0, 'atom')
