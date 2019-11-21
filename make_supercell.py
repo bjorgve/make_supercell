@@ -3,17 +3,17 @@ from copy import deepcopy
 
 
 def make_supercell(atoms, period):
-    '''Takes a list of atoms and the period in a unit cell then generates
-       a larger super cell
+    '''Takes a list of atoms and the period in a unitcell then generates
+       a larger supercell.
 
     Parameters:
-        atoms (list): Coordinates of the atoms and types
-        period (list): 3D period of the unit cell
+        atoms (list): Coordinates of the atoms and types.
+        period (list): 3D period of the unitcell.
 
 
     Returns:
-        super_cell (list): Coordinates of atoms and types in the super cell
-        period (list): Period of the super cell
+        super_cell (list): Coordinates of atoms and types in the supercell.
+        period (list): Period of the supercell.
 
     '''
     super_cell = []
@@ -45,7 +45,7 @@ def find_atom_in_origin(cell):
 
 
 def strip_coorners(super_cell, period):
-    '''Takes a super_cell and it's period, strips the coorners that will
+    '''Takes a supercell and it's period, strips the coorners that will
        be replicated by the peridicity
 
     Parameters:
