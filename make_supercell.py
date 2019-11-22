@@ -12,11 +12,11 @@ def make_supercell(atoms, period):
 
 
     Returns:
-        super_cell (list): Coordinates of atoms and types in the supercell.
+        supercell (list): Coordinates of atoms and types in the supercell.
         period (list): Period of the supercell.
 
     '''
-    super_cell = []
+    supercell = []
     for atom in atoms:
         type = atom.pop()
         # Get possible coordinates on each axis
@@ -32,8 +32,8 @@ def make_supercell(atoms, period):
                 for k in range(3):
                     new_atoms.append([x[i], y[j], z[k]])
         new_atoms = [new_atom + [type] for new_atom in new_atoms]
-        super_cell.append(new_atoms)
-    return list(chain(*super_cell)), [period*2.0 for period in period]
+        supercell.append(new_atoms)
+    return list(chain(*supercell)), [period*2.0 for period in period]
 
 
 def find_atom_in_origin(cell):
@@ -44,32 +44,81 @@ def find_atom_in_origin(cell):
     return raw_cell.index([0.0, 0.0, 0.0])
 
 
-def strip_coorners(super_cell, period):
+def strip_coorners(supercell, period):
     '''Takes a supercell and it's period, strips the coorners that will
        be replicated by the peridicity
 
     Parameters:
-        super_cell (list): Coordinates and atom types of contained in the super
+        supercell (list): Coordinates and atom types of contained in the super
                            cell
         period (list): 3D period of the super cell
 
     Returns:
-        super_cell (list): Stripped down super cell
+        supercell (list): Stripped down super cell
     '''
-    origin = super_cell[find_atom_in_origin(super_cell)]
+    origin = supercell[find_atom_in_origin(supercell)]
     type = origin[:].pop()
     coorners = [list(atom) + [type]
                 for atom in list(product([0.0, period[0]], repeat=3))]
     coorners.remove([0.0, 0.0, 0.0, type])
     for coorner in coorners:
-        super_cell.remove(coorner)
+        supercell.remove(coorner)
 
-    return super_cell
+    return supercell
+
+
+def strip_external_points(supercell, period):
+    '''Takes a supercell and it's period, strips points outside the unit cell.
+
+    Parameters:
+        supercell (list): Coordinates and atom types of contained in the super
+                           cell
+        period (list): 3D period of the super cell
+
+    Returns:
+        supercell (list): Stripped down super cell
+    '''
+    remove_bank = []
+    for atom in supercell:
+        if any(val > period[0] for val in atom[0:3]):
+            remove_bank.append(atom)
+    for atom in remove_bank:
+        supercell.remove(atom)
+
+    return supercell
+
+
+def reduce_boundary_points(supercell, period):
+    '''Takes a supercell and it's period, then removes points with containing
+       the maximum coordinanate (the period) of the supercell. These points has
+       to be removed since they are implicitly added when the cell is made
+       periodic.
+
+    Parameters:
+        supercell (list): Coordinates and atom types of contained in the
+                          supercell
+        period (list): 3D period of the supercell.
+
+    Returns:
+        supercell (list): Supercell without points containing maximum boundary
+                          values.
+    '''
+
+    points = []
+    for atom in supercell:
+        if any(val == period[0] for val in atom[0:3]):
+            points.append(atom)
+
+    for atom in points:
+        supercell.remove(atom)
+    return supercell
 
 
 if __name__ == "__main__":
     atoms = [[0.5, 0.5, 0.5, 'Ne'], [0.0, 0.0, 0.0, 'H']]
-    period = [1.0, 1.0, 1.0]
-    atoms, period = enlarge_super_cell(atoms, period)
+    period = [4.0, 4.0, 4.0]
+    atoms, period = make_supercell(atoms, period)
     # print(atoms)
     atoms = strip_coorners(atoms, period)
+    atoms = strip_external_points(atoms, period)
+    atoms = reduce_boundary_points(atoms, period)
