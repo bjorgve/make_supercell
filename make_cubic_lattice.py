@@ -42,16 +42,23 @@ def make_cubic_lattice(lattice, coords_np1=[[0.0, 0.0, 0.0]],
 
 
 def find_diagonals(coords):
+    '''Givet a list of coordinates this function returns coordinates
+       where all values are the same (diagonals).
+    '''
     return [coord for coord in coords
             if coord[1:] == coord[:-1]
             and coord != [0.0, 0.0, 0.0]]
 
 
 def in_list(coords, new_coord):
+    '''Check if a coordinate is located in the list of coordinates'''
     return any(new_coord == coord for coord in coords)
 
 
 def find_coorners(coords, diagonals):
+    '''Returns the smallest diagonal value in coords that has corresponding
+       coorners in the set of coords.
+    '''
     for diag in diagonals:
         possible_box = list(itertools.product([0.0, diag[0]], repeat=3))
         possible_box = [list(element) for element in possible_box]
@@ -68,9 +75,9 @@ def remove_negative_coordinates(coords):
     return coords
 
 
-def remove_large_coordinates(coords, coorner):
+def remove_large_coordinates(coords, max_val):
     tmp_list = [coord for coord in coords
-                if any(val > coorner for val in coord)]
+                if any(val > max_val for val in coord)]
     for coord in tmp_list:
         coords.remove(coord)
     return coords
