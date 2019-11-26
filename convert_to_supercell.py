@@ -15,11 +15,13 @@ args = parser.parse_args()
 
 
 atoms, lattice = read_geometry(args.input)
-assert is_cubic(lattice), f'Lattice must be cubic'
+assert is_cubic(lattice), 'Lattice must be cubic'
 periods = np.diag(lattice).tolist()
 atoms, periods = make_supercell(atoms, periods)
+print(atoms)
 atoms = strip_external_points(atoms, periods)
 atoms = reduce_boundary_points(atoms, periods)
 
+# Making lattice
 periods = np.diag(periods).tolist()
 write_geometry(atoms, periods, args.output)

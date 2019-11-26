@@ -96,5 +96,6 @@ if __name__ == "__main__":
 
     fcc = fcc_lattice(4.0)
     bcc = bcc_lattice(4.0)
-    print(make_cubic_lattice(fcc))
-    print(make_cubic_lattice(bcc))
+    atom, period = make_cubic_lattice(fcc)
+    print(period)
+    # print(make_cubic_lattice(bcc))
