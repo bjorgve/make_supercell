@@ -4,51 +4,59 @@ from numpy import diag
 
 def read_geometry(file):
     '''Takes a geometry.in file in the AIMS style retuns a list of the
-       periodicity and the atomic coordinatesself.
+       periodicity and the atomic coordinates.
 
     Parameters:
         file (str): Input geometry file in the AIMS style
 
     Returns:
-        atoms (list): List of atoms with their coordinates
-        perioids (list): List of 3D periodicity
+        atoms (list): List of atoms with their coordinates.
+        lattice (list): Lattice vector.
     '''
 
     with open(file, 'r') as inp_file:
         reader = list(csv.reader(inp_file, delimiter=' '))
         lattice = reader[0:3]
+
+        # Remove 'lattice vector'
         for vec in lattice:
+            assert vec[0] == 'lattice_vector',\
+                f'Line should start with lattice_vector not {vec[0]}'
             del vec[0]
+        lattice = [[float(nr) for nr in row] for row in lattice]
 
-        periods = [float(period) for period in diag(lattice)]
-
+        # Remove 'atom'
         atoms = reader[3:]
         for atom in atoms:
+            assert atom[0] == 'atom',\
+                f'Line should start with atom not {atom[0]}'
             del atom[0]
+
+        # Convert string numbers to floats
         for atom in atoms:
             for i, coord in enumerate(atom):
                 try:
                     atom[i] = float(coord)
                 except ValueError:
                     None
-        return atoms, periods
+        return atoms, lattice
 
 
-def write_geometry(atoms, period, file):
-    '''Takes a list of atoms and the period in a simple cubic cell
-       and generates a geometry.in file in the AIMS style.
+def write_geometry(atoms, lattice, file):
+    '''Takes a list of atoms and a lattice vector and generates a geometry.in
+       file in the AIMS style.
 
     Parameters:
         atoms (list): Coordinates of the atoms and types.
-        period (list): 3D period of the unitcell.
+        lattice (list): 3D lattice vector.
         file (str): Output file name.
     '''
     for atom in atoms:
         atom.insert(0, 'atom')
-    period = diag(period).tolist()
-    for p in period:
+
+    for p in lattice:
         p.insert(0, 'lattice_vector')
-    lattice_atoms = period + atoms
+    lattice_atoms = lattice + atoms
     with open(file, 'w') as out_file:
         writer = csv.writer(out_file, delimiter=' ')
         writer.writerows(lattice_atoms)

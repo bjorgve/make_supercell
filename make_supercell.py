@@ -14,7 +14,6 @@ def make_supercell(atoms, period):
     Returns:
         supercell (list): Coordinates of atoms and types in the supercell.
         period (list): Period of the supercell.
-
     '''
     supercell = []
     for atom in atoms:
@@ -112,6 +111,16 @@ def reduce_boundary_points(supercell, period):
     for atom in points:
         supercell.remove(atom)
     return supercell
+
+
+def is_cubic(lattice):
+    '''Check if a lattice is cubic.'''
+    import numpy as np
+    lattice = np.array(lattice)
+    assert lattice.shape == (3, 3),\
+        f'Invalid lattice shape: {lattice.shape} is not (3, 3)'
+    lattice = lattice - np.diag(np.diag(lattice))
+    return np.count_nonzero(lattice - np.diag(np.diag(lattice))) == 0
 
 
 if __name__ == "__main__":
